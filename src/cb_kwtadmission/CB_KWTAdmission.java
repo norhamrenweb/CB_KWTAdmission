@@ -29,6 +29,7 @@ public class CB_KWTAdmission {
      */
     public static void main(String[] args) throws SQLException {
         try {
+            SendMessage.sendmessage("prueba mensaje", "eduweb", "");//HAY QUE RELLENAR EL NUMERO PARA PROBAR
             // TODO code application logic here
             //scan all the field in a checklist school code CBEL checklist id 7 the itemid is 16 & in CBML 4
             //compare the date in the field with today date
