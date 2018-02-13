@@ -52,9 +52,13 @@ public class CB_KWTAdmission {
                 DateTime assesDate = null;
                 assesDate = fmt.parseDateTime(date);
                 DateTime today = new DateTime();
-                Days d = Days.daysBetween(assesDate, today);
+                today = today.withHourOfDay(0);
+                today = today.withMinuteOfHour(0);
+                today = today.withSecondOfMinute(0);
+                today = today.withMillisOfSecond(0);
+                Days d = Days.daysBetween(today,assesDate);
                 int days = d.getDays();
-                if (days == 2 && assesDate.isBefore(today) ) {
+                if (days == 2) {
                     studentids.add(rs.getInt("studentid"));
                     dates.add(assesDate);
                 }
