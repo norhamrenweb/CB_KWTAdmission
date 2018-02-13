@@ -17,6 +17,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  *
@@ -29,7 +31,7 @@ public class CB_KWTAdmission {
      */
     public static void main(String[] args) throws SQLException {
         try {
-            SendMessage.sendmessage("prueba mensaje", "eduweb", "");//HAY QUE RELLENAR EL NUMERO PARA PROBAR
+    //        SendMessage.sendmessage("prueba mensaje", "eduweb", "0034603751709");//HAY QUE RELLENAR EL NUMERO PARA PROBAR
             // TODO code application logic here
             //scan all the field in a checklist school code CBEL checklist id 7 the itemid is 16 & in CBML 4
             //compare the date in the field with today date
@@ -38,18 +40,21 @@ public class CB_KWTAdmission {
             // send sms and write a message in a textfile
 
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            Connection cn = DriverManager.getConnection("jdbc:sqlserver://deb-qat.odbc.renweb.com:1433;databaseName=deb_qat", "DEB_QAT_CUST", "UnderQuiet+227");
+            Connection cn = DriverManager.getConnection("jdbc:sqlserver://cb-kwt.odbc.renweb.com:1433;databaseName=cb_kwt", "CB_KWT_CUST", "5-cBKwTC)2S$o2h");
 
             Statement st = cn.createStatement();
             ArrayList<Integer> studentids = new ArrayList<>();
             ArrayList<DateTime> dates = new ArrayList<>();
             ResultSet rs = st.executeQuery("Select td.id,td.note as assesdate,si.studentid as studentid from trackingdata td inner join studentinquiry si on td.id=si.inquiryid where td.trackingsystemid = 7 and itemnumber = 1");
             while (rs.next()) {
-                DateTime assesDate = new DateTime(rs.getString("assesdate"));
+                String date = rs.getString("assesdate");
+                DateTimeFormatter fmt = DateTimeFormat.forPattern("MM/dd/yyyy");
+                DateTime assesDate = null;
+                assesDate = fmt.parseDateTime(date);
                 DateTime today = new DateTime();
                 Days d = Days.daysBetween(assesDate, today);
                 int days = d.getDays();
-                if (days == 1) {
+                if (days == 2 && assesDate.isBefore(today) ) {
                     studentids.add(rs.getInt("studentid"));
                     dates.add(assesDate);
                 }
