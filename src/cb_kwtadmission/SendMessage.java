@@ -79,6 +79,11 @@ class SendMessage {
             bodyElement.appendChild(bodyValue);
             msgElement.appendChild(bodyElement);
 
+             Element CUSTOMGROUPINGElement = doc.createElement("CUSTOMGROUPING");
+            Text CUSTOMGROUPINGValue = doc.createTextNode("CB_KWT");
+            CUSTOMGROUPINGElement.appendChild(CUSTOMGROUPINGValue);
+            msgElement.appendChild(CUSTOMGROUPINGElement);
+            
             Element DCSElement = doc.createElement("DCS");
             Text DCSValue = doc.createTextNode("8");
             DCSElement.appendChild(DCSValue);

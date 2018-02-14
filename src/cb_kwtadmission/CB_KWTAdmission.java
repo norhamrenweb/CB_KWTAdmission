@@ -45,6 +45,7 @@ public class CB_KWTAdmission {
             Statement st = cn.createStatement();
             ArrayList<Integer> studentids = new ArrayList<>();
             ArrayList<DateTime> dates = new ArrayList<>();
+           
             ResultSet rs = st.executeQuery("Select td.id,td.note as assesdate,si.studentid as studentid from trackingdata td inner join studentinquiry si on td.id=si.inquiryid where td.trackingsystemid = 7 and itemnumber = 1");
             while (rs.next()) {
                 String date = rs.getString("assesdate");
@@ -62,18 +63,34 @@ public class CB_KWTAdmission {
                     studentids.add(rs.getInt("studentid"));
                     dates.add(assesDate);
                 }
+                
             }
             for (int i = 0; i <studentids.size();i++) {
+                String hour = null;
+                ResultSet rs2 = st.executeQuery("Select td.id,td.note as hour,si.studentid as studentid from trackingdata td inner join studentinquiry si on td.id=si.inquiryid where td.trackingsystemid = 7 and itemnumber = 2 and si.studentid="+studentids.get(i));
+            while (rs2.next()) {
+                hour = rs2.getString("hour");
+            }
                 ResultSet rs1 = st.executeQuery("Select CellPhone from Students where studentid = " + studentids.get(i));
                 if (rs1.next()) {
                     String cell = rs1.getString("cellphone");
                     File f = new File("cellphonefound.log");
                     FileWriter fichero = null;
                     try {
-                        String message= "Reminder: Your Child's assessment is tomorrow at 00:00 @ The Canadian Bilingual School\n" +
-"تذكير: غدا هو يوم الاختبار لإبنك/ ابنتك  في الساعة  00:00 في المدرسة الكندية ثنائية اللغة";
+                         String message= "Reminder: Your Child's assessment is tomorrow @ The Canadian Bilingual School\n" +
+"تذكير: غدا هو يوم الاختبار لإبنك/ ابنتك في المدرسة الكندية ثنائية اللغة";
+                        if(hour==null || hour =="")
+                        {
+                        message= "Reminder: Your Child's assessment is tomorrow @ The Canadian Bilingual School\n" +
+"تذكير: غدا هو يوم الاختبار لإبنك/ ابنتك في المدرسة الكندية ثنائية اللغة";
+                        }
+                        else
+                        {
+                         message= "Reminder: Your Child's assessment is tomorrow at 00:00 @ The Canadian Bilingual School\n" +
+"تذكير: غدا هو يوم الاختبار لإبنك/ ابنتك  في الساعة  "+hour+" في المدرسة الكندية ثنائية اللغة"   ;
+                                }
                         int check = message.length();
-                         SendMessage.sendmessage(message, "CB School", "0096560419280");//HAY QUE RELLENAR EL NUMERO PARA PROBAR
+                         SendMessage.sendmessage(message, "CB School", "00965"+cell);//HAY QUE RELLENAR EL NUMERO PARA PROBAR
                         fichero = new FileWriter(f.getAbsoluteFile(),true);
                             // Escribimos linea a linea en el fichero
                         fichero.write("Cell phone message data: "
