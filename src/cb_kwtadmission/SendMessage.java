@@ -24,15 +24,14 @@ class SendMessage {
     public static final String URL = "https://sgw01.cm.nl/gateway.ashx";
 
     public static void sendmessage(String message , String sendername,String cellphone) {
-        try {
-            UUID productToken = UUID.fromString("00000000-0000-0000-0000-000000000000");
+        
+            UUID productToken = UUID.fromString("62f6f076-eb6e-4395-8f02-83a9505f891b");
             String xml = createXml(productToken, sendername,cellphone,message);
             String response = doHttpPost(URL, xml);
+            
             System.out.println("Response: " + response);
-            System.in.read();
-        } catch (IOException e) {
-            System.err.println(e); // Display the string.
-        }
+            //System.in.read();
+       
     }
 
     private static String createXml(UUID productToken, String sender, String recipient, String message) {
@@ -64,11 +63,26 @@ class SendMessage {
             Text fromValue = doc.createTextNode(sender);
             fromElement.appendChild(fromValue);
             msgElement.appendChild(fromElement);
-
+            
+            Element MINIMUMNUMBEROFMESSAGEPARTSElement = doc.createElement("MINIMUMNUMBEROFMESSAGEPARTS");
+            Text MINIMUMNUMBEROFMESSAGEPARTSValue = doc.createTextNode("1");
+            MINIMUMNUMBEROFMESSAGEPARTSElement.appendChild(MINIMUMNUMBEROFMESSAGEPARTSValue);
+            msgElement.appendChild(MINIMUMNUMBEROFMESSAGEPARTSElement);
+            
+            Element MAXIMUMNUMBEROFMESSAGEPARTSElement = doc.createElement("MAXIMUMNUMBEROFMESSAGEPARTS");
+            Text MAXIMUMNUMBEROFMESSAGEPARTSValue = doc.createTextNode("8");
+            MAXIMUMNUMBEROFMESSAGEPARTSElement.appendChild(MAXIMUMNUMBEROFMESSAGEPARTSValue);
+            msgElement.appendChild(MAXIMUMNUMBEROFMESSAGEPARTSElement);
+            
             Element bodyElement = doc.createElement("BODY");
             Text bodyValue = doc.createTextNode(message);
             bodyElement.appendChild(bodyValue);
             msgElement.appendChild(bodyElement);
+
+            Element DCSElement = doc.createElement("DCS");
+            Text DCSValue = doc.createTextNode("8");
+            DCSElement.appendChild(DCSValue);
+            msgElement.appendChild(DCSElement);
 
             Element toElement = doc.createElement("TO");
             Text toValue = doc.createTextNode(recipient);

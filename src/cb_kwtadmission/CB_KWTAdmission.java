@@ -31,7 +31,7 @@ public class CB_KWTAdmission {
      */
     public static void main(String[] args) throws SQLException {
         try {
-    //        SendMessage.sendmessage("prueba mensaje", "eduweb", "0034603751709");//HAY QUE RELLENAR EL NUMERO PARA PROBAR
+  
             // TODO code application logic here
             //scan all the field in a checklist school code CBEL checklist id 7 the itemid is 16 & in CBML 4
             //compare the date in the field with today date
@@ -58,7 +58,7 @@ public class CB_KWTAdmission {
                 today = today.withMillisOfSecond(0);
                 Days d = Days.daysBetween(today,assesDate);
                 int days = d.getDays();
-                if (days == 2) {
+                if (days == 1) {
                     studentids.add(rs.getInt("studentid"));
                     dates.add(assesDate);
                 }
@@ -70,6 +70,10 @@ public class CB_KWTAdmission {
                     File f = new File("cellphonefound.log");
                     FileWriter fichero = null;
                     try {
+                        String message= "Reminder: Your Child's assessment is tomorrow at 00:00 @ The Canadian Bilingual School\n" +
+"تذكير: غدا هو يوم الاختبار لإبنك/ ابنتك  في الساعة  00:00 في المدرسة الكندية ثنائية اللغة";
+                        int check = message.length();
+                         SendMessage.sendmessage(message, "CB School", "0096560419280");//HAY QUE RELLENAR EL NUMERO PARA PROBAR
                         fichero = new FileWriter(f.getAbsoluteFile(),true);
                             // Escribimos linea a linea en el fichero
                         fichero.write("Cell phone message data: "
@@ -77,6 +81,7 @@ public class CB_KWTAdmission {
                                 + " IDstudent="+ studentids.get(i) + " Date="
                                 + dates.get(i)+ System.getProperty("line.separator"));
                         fichero.close();
+                        
                     } catch (Exception ex) {
                         System.out.println("Mensaje de la excepción: " + ex.getMessage());
                     }
