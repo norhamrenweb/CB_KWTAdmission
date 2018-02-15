@@ -86,7 +86,7 @@ public class CB_KWTAdmission {
                         }
                         else
                         {
-                         message= "Reminder: Your Child's assessment is tomorrow at 00:00 @ The Canadian Bilingual School\n" +
+                         message= "Reminder: Your Child's assessment is tomorrow at "+hour+" @ The Canadian Bilingual School\n" +
 "تذكير: غدا هو يوم الاختبار لإبنك/ ابنتك  في الساعة  "+hour+" في المدرسة الكندية ثنائية اللغة"   ;
                                 }
                         int check = message.length();
