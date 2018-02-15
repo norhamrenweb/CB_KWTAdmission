@@ -76,6 +76,7 @@ class SendMessage {
             
             Element bodyElement = doc.createElement("BODY");
             Text bodyValue = doc.createTextNode(message);
+            bodyElement.setAttribute("TYPE","AUTO");
             bodyElement.appendChild(bodyValue);
             msgElement.appendChild(bodyElement);
 
@@ -84,10 +85,10 @@ class SendMessage {
             CUSTOMGROUPINGElement.appendChild(CUSTOMGROUPINGValue);
             msgElement.appendChild(CUSTOMGROUPINGElement);
             
-            Element DCSElement = doc.createElement("DCS");
-            Text DCSValue = doc.createTextNode("8");
-            DCSElement.appendChild(DCSValue);
-            msgElement.appendChild(DCSElement);
+//            Element DCSElement = doc.createElement("DCS");
+//            Text DCSValue = doc.createTextNode("8");
+//            DCSElement.appendChild(DCSValue);
+//            msgElement.appendChild(DCSElement);
 
             Element toElement = doc.createElement("TO");
             Text toValue = doc.createTextNode(recipient);

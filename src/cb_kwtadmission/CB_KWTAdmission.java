@@ -65,7 +65,7 @@ public class CB_KWTAdmission {
                 }
                 
             }
-            for (int i = 0; i <studentids.size();i++) {
+            for (int i = 1; i <studentids.size();i++) {
                 String hour = null;
                 ResultSet rs2 = st.executeQuery("Select td.id,td.note as hour,si.studentid as studentid from trackingdata td inner join studentinquiry si on td.id=si.inquiryid where td.trackingsystemid = 7 and itemnumber = 2 and si.studentid="+studentids.get(i));
             while (rs2.next()) {
@@ -90,7 +90,7 @@ public class CB_KWTAdmission {
 "تذكير: غدا هو يوم الاختبار لإبنك/ ابنتك  في الساعة  "+hour+" في المدرسة الكندية ثنائية اللغة"   ;
                                 }
                         int check = message.length();
-                         SendMessage.sendmessage(message, "CB School", "00965"+cell);//HAY QUE RELLENAR EL NUMERO PARA PROBAR
+                         SendMessage.sendmessage(message, "CB School","00965"+cell);//HAY QUE RELLENAR EL NUMERO PARA PROBAR
                         fichero = new FileWriter(f.getAbsoluteFile(),true);
                             // Escribimos linea a linea en el fichero
                         fichero.write("Cell phone message data: "
