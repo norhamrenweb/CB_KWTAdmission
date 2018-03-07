@@ -83,7 +83,7 @@ public class CB_KWTAdmission {
                     } catch (Exception ex) {
                         System.out.println("Mensaje de la excepción: " + ex.getMessage());
                     }
-                    mensaje = "no students found";
+                    mensaje = "No students found";
             }
                 
             
@@ -115,8 +115,8 @@ public class CB_KWTAdmission {
                         SendMessage.sendmessage(message, "CB School","00965"+cell);//HAY QUE RELLENAR EL NUMERO PARA PROBAR
                         fichero = new FileWriter(f.getAbsoluteFile(),true);
                             // Escribimos linea a linea en el fichero
-                        String m = "Cell phone message data: "
-                                + "Cellphone="+cell + "Name Student:" + fetchName(studentids.get(i),st)
+                        String m = "Messages sent to: "
+                                + "Cellphone="+cell + " Name Student:" + fetchName(studentids.get(i),st)
                                 + " IDstudent="+ studentids.get(i) + " Date="
                                 + dates.get(i)+ System.getProperty("line.separator");
                         mensaje +="<br>"+ m;
@@ -148,9 +148,8 @@ public class CB_KWTAdmission {
             Logger.getLogger(CB_KWTAdmission.class.getName()).log(Level.SEVERE, null, ex);
         }
         ArrayList<String> dest = new ArrayList();
-        dest.add("nmohamed@eduwebgroup.com");
-        dest.add("josepe04@ucm.es");
-        Mensaje m = new Mensaje(mensaje,"Admisions sms summary report",dest);
+        dest.add("itsupport1@cbskuwait.com");  
+        Mensaje m = new Mensaje(mensaje,"Admisions SMS summary report",dest);
         SendMail.SendMail(m);
 
     }
