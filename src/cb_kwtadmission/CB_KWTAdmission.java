@@ -8,10 +8,13 @@ package cb_kwtadmission;
 import java.io.File;
 import java.io.FileWriter;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +33,7 @@ public class CB_KWTAdmission {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws SQLException {
+        String mensaje = "";
         try {
   
             // TODO code application logic here
@@ -45,7 +49,10 @@ public class CB_KWTAdmission {
             Statement st = cn.createStatement();
             ArrayList<Integer> studentids = new ArrayList<>();
             ArrayList<DateTime> dates = new ArrayList<>();
-           
+            
+            DateFormat df = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
+            String hoy = df.format(new Date(System.currentTimeMillis()));
+            
             ResultSet rs = st.executeQuery("Select td.id,td.note as assesdate,si.studentid as studentid from trackingdata td inner join studentinquiry si on td.id=si.inquiryid where td.trackingsystemid = 7 and itemnumber = 1");
             while (rs.next()) {
                 String date = rs.getString("assesdate");
@@ -65,16 +72,31 @@ public class CB_KWTAdmission {
                 }
                 
             }
+            if(studentids.isEmpty()){
+                File f = new File(hoy+"noStudentsFound.log");
+                    FileWriter fichero = null;
+                    try {
+                        fichero = new FileWriter(f.getAbsoluteFile(),true);
+                            // Escribimos linea a linea en el fichero
+                        fichero.write("no se encontraron estudiantes");
+                        fichero.close();
+                    } catch (Exception ex) {
+                        System.out.println("Mensaje de la excepción: " + ex.getMessage());
+                    }
+                    mensaje = "no students found";
+            }
+                
+            
             for (int i = 1; i <studentids.size();i++) {
                 String hour = null;
                 ResultSet rs2 = st.executeQuery("Select td.id,td.note as hour,si.studentid as studentid from trackingdata td inner join studentinquiry si on td.id=si.inquiryid where td.trackingsystemid = 7 and itemnumber = 2 and si.studentid="+studentids.get(i));
-            while (rs2.next()) {
-                hour = rs2.getString("hour");
-            }
+                while (rs2.next()) {
+                    hour = rs2.getString("hour");
+                }
                 ResultSet rs1 = st.executeQuery("Select CellPhone from Students where studentid = " + studentids.get(i));
                 if (rs1.next()) {
                     String cell = rs1.getString("cellphone");
-                    File f = new File("cellphonefound.log");
+                    File f = new File(hoy+"cellphonefound.log");
                     FileWriter fichero = null;
                     try {
                          String message= "Reminder: Your Child's assessment is tomorrow @ The Canadian Bilingual School\n" +
@@ -90,27 +112,32 @@ public class CB_KWTAdmission {
 "تذكير: غدا هو يوم الاختبار لإبنك/ ابنتك  في الساعة  "+hour+" في المدرسة الكندية ثنائية اللغة"   ;
                                 }
                         int check = message.length();
-                         SendMessage.sendmessage(message, "CB School","00965"+cell);//HAY QUE RELLENAR EL NUMERO PARA PROBAR
+                        SendMessage.sendmessage(message, "CB School","00965"+cell);//HAY QUE RELLENAR EL NUMERO PARA PROBAR
                         fichero = new FileWriter(f.getAbsoluteFile(),true);
                             // Escribimos linea a linea en el fichero
-                        fichero.write("Cell phone message data: "
-                                + "Cellphone="+cell
+                        String m = "Cell phone message data: "
+                                + "Cellphone="+cell + "Name Student:" + fetchName(studentids.get(i),st)
                                 + " IDstudent="+ studentids.get(i) + " Date="
-                                + dates.get(i)+ System.getProperty("line.separator"));
+                                + dates.get(i)+ System.getProperty("line.separator");
+                        mensaje +="<br>"+ m;
+                        fichero.write(m);
                         fichero.close();
                         
                     } catch (Exception ex) {
                         System.out.println("Mensaje de la excepción: " + ex.getMessage());
                     }
                 }else{
-                    File f = new File("cellphonenotfound.log");
+                    File f = new File(hoy+"cellphonenotfound.log");
                     FileWriter fichero = null;
                     try {
                         fichero = new FileWriter(f.getAbsoluteFile(),true);
-                            // Escribimos linea a linea en el fichero
-                        fichero.write("Cell phone not found: "
-                                + "IDstudent="+ studentids.get(i) + " Date="
-                                + dates.get(i)+ System.getProperty("line.separator"));
+                        String m = "Cell phone not found: "
+                                + "IDstudent="+ studentids.get(i) + "Name Student:" + fetchName(studentids.get(i),st) 
+                                + " Date=" + dates.get(i)+ System.getProperty("line.separator");
+                            
+                        mensaje+="<br>"+m;
+                        // Escribimos linea a linea en el fichero
+                        fichero.write(m);
                         fichero.close();
                     } catch (Exception ex) {
                         System.out.println("Mensaje de la excepción: " + ex.getMessage());
@@ -120,7 +147,27 @@ public class CB_KWTAdmission {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(CB_KWTAdmission.class.getName()).log(Level.SEVERE, null, ex);
         }
+        ArrayList<String> dest = new ArrayList();
+        dest.add("nmohamed@eduwebgroup.com");
+        dest.add("josepe04@ucm.es");
+        Mensaje m = new Mensaje(mensaje,"Admisions sms summary report",dest);
+        SendMail.SendMail(m);
 
     }
+    
+    private static String fetchName(int id ,Statement st){
+        String consulta = "select * from person where personid="+id;
+        String ret = "";
+        try {
+            ResultSet rs = st.executeQuery(consulta);
+            while(rs.next()){
+                ret+=rs.getString("lastname")+" ,";
+                ret+=rs.getString("firstname");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CB_KWTAdmission.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ret;
+    } 
 
 }
