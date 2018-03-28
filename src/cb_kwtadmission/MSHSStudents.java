@@ -77,7 +77,7 @@ public class MSHSStudents {
             }
                 
             
-            for (int i = 1; i <studentids.size();i++) {
+            for (int i = 0; i <studentids.size();i++) {
                 String hour = null;
                 ResultSet rs2 = st.executeQuery("Select td.id,td.note as hour,si.studentid as studentid from trackingdata td inner join studentinquiry si on td.id=si.inquiryid where td.trackingsystemid = 4 and itemnumber = 3 and si.studentid="+studentids.get(i));
                 while (rs2.next()) {
